@@ -35,14 +35,11 @@ class ClientController extends Controller
                     break;
                 }
             }
-            if ($showSub) {
-                $this->setSubscribeInfoToServers($servers, $user);
-            }
             // MeT 20240823 End
 
             if($flag) {
                 if (!strpos($flag, 'sing')) {
-                    $this->setSubscribeInfoToServers($servers, $user);
+                    if ($showSub) $this->setSubscribeInfoToServers($servers, $user);
                     foreach (array_reverse(glob(app_path('Protocols') . '/*.php')) as $file) {
                         $file = 'App\\Protocols\\' . basename($file, '.php');
                         $class = new $file($user, $servers);

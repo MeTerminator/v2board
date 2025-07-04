@@ -25,9 +25,21 @@ class ClientController extends Controller
         if ($userService->isAvailable($user)) {
             $serverService = new ServerService();
             $servers = $serverService->getAvailableServers($user);
+            
+            // MeT 20240823 Start
+            $subInfoBlacklist = ['surge', 'surfboard', 'stash', 'shadowrocket', 'quantumultx', 'loon', 'clashmeta', 'clash', 'sing-box', 'singbox', 'sing', 'meta'];
+            $showSub = true;
+            foreach ($subInfoBlacklist as $subName) {
+                if (strpos($flag, $subName) !== false) {
+                    $showSub = false;
+                    break;
+                }
+            }
+            // MeT 20240823 End
+
             if($flag) {
                 if (!strpos($flag, 'sing')) {
-                    $this->setSubscribeInfoToServers($servers, $user);
+                    if ($showSub) $this->setSubscribeInfoToServers($servers, $user);
                     foreach (array_reverse(glob(app_path('Protocols') . '/*.php')) as $file) {
                         $file = 'App\\Protocols\\' . basename($file, '.php');
                         $class = new $file($user, $servers);
@@ -65,15 +77,26 @@ class ClientController extends Controller
         $userService = new UserService();
         $resetDay = $userService->getResetDay($user);
         array_unshift($servers, array_merge($servers[0], [
-            'name' => "套餐到期：{$expiredDate}",
+            'name' => "🚀套餐到期：{$expiredDate}",
+            'host' => '127.0.0.1',
+            'port' => 10086,
         ]));
         if ($resetDay) {
             array_unshift($servers, array_merge($servers[0], [
-                'name' => "距离下次重置剩余：{$resetDay} 天",
+                'name' => "🚀距离下次重置剩余：{$resetDay} 天",
+                'host' => '127.0.0.1',
+                'port' => 10086,
             ]));
         }
         array_unshift($servers, array_merge($servers[0], [
-            'name' => "剩余流量：{$remainingTraffic}",
+            'name' => "🚀剩余流量：{$remainingTraffic}",
+            'host' => '127.0.0.1',
+            'port' => 10086,
+        ]));
+        array_unshift($servers, array_merge($servers[0], [
+            'name' => "🚀FassCloud | https://dash.metc.uk/",
+            'host' => '127.0.0.1',
+            'port' => 10086,
         ]));
     }
 }

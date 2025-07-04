@@ -22,5 +22,9 @@ yarn.lock
 docker-compose.yml
 .DS_Store
 public/clients/*
+<<<<<<< HEAD
+.vscode
+=======
 workerman.webman.php.pid
 workerman.log
+>>>>>>> f164dcdd (优化用户列表传输数据量)

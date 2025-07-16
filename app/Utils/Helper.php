@@ -100,11 +100,25 @@ class Helper
         $path = config('v2board.subscribe_path', '/api/v1/client/subscribe');
         if (empty($path)) {
             $path = '/api/v1/client/subscribe';
-        } 
+        }
         $path = "{$path}?token={$token}";
         $subscribeUrls = explode(',', config('v2board.subscribe_url'));
         $subscribeUrl = $subscribeUrls[rand(0, count($subscribeUrls) - 1)];
-        if ($subscribeUrl) return $subscribeUrl . $path;
+    
+        // 判断客户端请求是否为 HTTPS（兼容 Cloudflare）
+        $isHttps = (
+            (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ||
+            (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https') ||
+            (isset($_SERVER['REQUEST_SCHEME']) && $_SERVER['REQUEST_SCHEME'] === 'https')
+        );
+    
+        if ($subscribeUrl) {
+            if (stripos($subscribeUrl, 'http://') === 0 && $isHttps) {
+                $subscribeUrl = preg_replace('/^http:\/\//i', 'https://', $subscribeUrl);
+            }
+            return $subscribeUrl . $path;
+        }
+    
         return url($path);
     }
 

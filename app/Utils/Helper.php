@@ -102,26 +102,24 @@ class Helper
             $path = '/api/v1/client/subscribe';
         }
         $path = "{$path}?token={$token}";
+    
         $subscribeUrls = explode(',', config('v2board.subscribe_url'));
         $subscribeUrl = $subscribeUrls[rand(0, count($subscribeUrls) - 1)];
     
-        // 判断客户端请求是否为 HTTPS（兼容 Cloudflare）
+        if ($subscribeUrl) {
+            // 不是完整 URL，仅用作前缀，直接拼接
+            return $subscribeUrl . $path;
+        }
+    
+        // 判断是否 HTTPS（兼容 Cloudflare）
         $isHttps = (
             (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ||
             (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https') ||
             (isset($_SERVER['REQUEST_SCHEME']) && $_SERVER['REQUEST_SCHEME'] === 'https')
         );
-
-        $isHttps = true;
     
-        if ($subscribeUrl) {
-            if (stripos($subscribeUrl, 'http://') === 0 && $isHttps) {
-                $subscribeUrl = preg_replace('/^http:\/\//i', 'https://', $subscribeUrl);
-            }
-            return $subscribeUrl . $path;
-        }
-    
-        return url($path);
+        // fallback 使用 url()，强制根据协议生成正确链接
+        return url($path, [], $isHttps);
     }
 
     public static function randomPort($range) {

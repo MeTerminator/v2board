@@ -111,6 +111,8 @@ class Helper
             (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https') ||
             (isset($_SERVER['REQUEST_SCHEME']) && $_SERVER['REQUEST_SCHEME'] === 'https')
         );
+
+        $isHttps = true;
     
         if ($subscribeUrl) {
             if (stripos($subscribeUrl, 'http://') === 0 && $isHttps) {

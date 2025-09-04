@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FassCloud - 客户端授权</title>
+    <style>
+        /* 浅色模式（默认） */
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            background-color: #f4f7f9;
+            color: #333;
+            text-align: center;
+            flex-direction: column;
+        }
+        .container {
+            background: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 90%;
+            align-items: center;
+        }
+        h1 {
+            color: #2c3e50;
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        .btn {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+        }
+        .btn:hover {
+            background-color: #2980b9;
+        }
+
+        /* 深色模式适配 */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #121212;
+                color: #e0e0e0;
+            }
+            .container {
+                background: #1e1e1e;
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            }
+            h1 {
+                color: #bdbdbd;
+            }
+            .btn {
+                background-color: #64b5f6;
+                color: #121212;
+            }
+            .btn:hover {
+                background-color: #42a5f5;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="content">
+        <h1>FassCloud - 客户端授权</h1>
+        <p>正在检查登录状态...</p>
+    </div>
+</div>
+
+<script>
+    const contentDiv = document.getElementById('content');
+    let checkInterval = null;
+
+    /**
+     * 获取 URL 中的指定参数
+     * @param {string} name 参数名
+     * @returns {string|null} 参数值或 null
+     */
+    function getUrlParameter(name) {
+        name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+        const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+        const results = regex.exec(location.search);
+        return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    }
+
+    async function checkLoginStatus() {
+        const authorization = localStorage.getItem('authorization');
+
+        if (authorization) {
+            try {
+                const response = await fetch('/api/v1/user/getSubscribe', {
+                    method: 'GET',
+                    headers: { 'Authorization': authorization }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const subscribe_url = data.data.subscribe_url;
+                    
+                    // 获取 URL 中的 port 参数，若没有则使用默认值 9818
+                    const port = getUrlParameter('port') || '9818';
+
+                    contentDiv.innerHTML = `
+                        <h1>FassCloud - 客户端授权</h1>
+                        <p>点击下方按钮，登录您的客户端。</p>
+                        <a href="http://127.0.0.1:${port}/login?token=${btoa(subscribe_url)}" class="btn">登录客户端</a>
+                    `;
+                    clearInterval(checkInterval);
+                    return;
+                }
+            } catch (error) {
+                console.error('API请求失败:', error);
+            }
+        }
+
+        contentDiv.innerHTML = `
+            <h1>FassCloud - 客户端授权</h1>
+            <p>您尚未登录。<br>请点击下方按钮，在打开的界面登录您的账号，<br>然后返回本页面完成授权。</p>
+            <a href="/#/login" target="_blank" class="btn">前往登录</a>
+        `;
+    }
+
+    checkLoginStatus();
+    checkInterval = setInterval(checkLoginStatus, 2000);
+    window.addEventListener('focus', checkLoginStatus);
+</script>
+
+</body>
+</html>

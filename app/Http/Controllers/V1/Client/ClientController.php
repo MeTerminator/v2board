@@ -22,6 +22,7 @@ class ClientController extends Controller
         $user = $request->user;
         // account not expired and is not banned.
         $userService = new UserService();
+        header("subscription-userinfo: upload={$user['u']}; download={$user['d']}; total={$user['transfer_enable']}; expire={$user['expired_at']}");
         if ($userService->isAvailable($user)) {
             $serverService = new ServerService();
             $servers = $serverService->getAvailableServers($user);

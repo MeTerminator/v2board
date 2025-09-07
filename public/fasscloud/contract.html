@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>FassCloud - 服务条款</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" href="/fasscloud/icon.png">
+  <link rel="stylesheet" href="/fasscloud/github-markdown.css">
+</head>
+
+<body>
+  <div id="md-wrapper" style="display: none;">
+    正在加载数据，请启用浏览器 JavaScript。
+  </div>
+  <div id="html-wrapper" class="markdown-body"></div>
+  <script src='/fasscloud/marked.min.js'></script>
+  <script>
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function () {
+      if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+        document.getElementById("md-wrapper").innerHTML = xmlhttp.responseText;
+        let md = document.getElementById('md-wrapper').innerHTML
+        document.getElementById('html-wrapper').innerHTML = marked(md)
+     }
+    };
+    xmlhttp.open("GET", "contract.md", true);
+    xmlhttp.send();
+  </script>
+</body>
+
+</html>

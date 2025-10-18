@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V1\Admin\Server;
 use App\Http\Controllers\Controller;
 use App\Models\ServerRoute;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class RouteController extends Controller
 {
@@ -25,7 +26,7 @@ class RouteController extends Controller
         $params = $request->validate([
             'remarks' => 'required',
             'match' => 'required|array',
-            'action' => 'required|in:block,dns,route',
+            'action' => 'required|in:block,dns,route,route_ip',
             'action_value' => 'nullable'
         ], [
             'remarks.required' => '备注不能为空',

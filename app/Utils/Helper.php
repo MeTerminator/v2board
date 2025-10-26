@@ -170,12 +170,10 @@ class Helper
 
     public static function buildUri($uuid, $server)
     {
-        $type = $server['type'];
-        if ($type == 'v2node') {
-            $type = $server['protocol'];
-            $server['type'] = $type;
+        if ($server['type'] == 'v2node') {
+            $server['type'] = $server['protocol'];
         } 
-        $method = "build" . ucfirst($type) . "Uri";
+        $method = "build" . ucfirst($server['type']) . "Uri";
 
         if (method_exists(self::class, $method)) {
             return self::$method($uuid, $server);
@@ -215,7 +213,7 @@ class Helper
         $uri = "ss://{$str}@{$add}:{$server['port']}";
         if ($server['obfs'] == 'http') {
             $uri .= "?plugin=obfs-local;obfs=http;obfs-host={$server['obfs-host']};path={$server['obfs-path']}";
-        } else if ($server['network'] == 'http' && isset($server['network_settings']['Host'])) {
+        } else if ((($server['network'] ?? null) == 'http') && isset($server['network_settings']['Host'])) {
             $path = $server['network_settings']['path'] ?? '/';
             $uri .= "?plugin=obfs-local;obfs=tls;obfs-host={$server['network_settings']['Host']};path={$path}";
         }
@@ -242,6 +240,7 @@ class Helper
 
         if ($server['tls']) {
             $tlsSettings = $server['tls_settings'] ?? $server['tlsSettings'] ?? [];
+            $config['allowInsecure'] = (int)($tlsSettings['allow_insecure'] ?? $tlsSettings['allowInsecure'] ?? 0);
             $config['sni'] = $tlsSettings['server_name'] ?? $tlsSettings['serverName'] ?? '';
         }
         
@@ -293,6 +292,7 @@ class Helper
     public static function buildVlessUri($uuid, $server)
     {
         $name = self::encodeURIComponent($server['name']);
+        $tlsSettings = $server['tls_settings'] ?? [];
 
         $config = [
             "type" => $server['network'],
@@ -304,8 +304,8 @@ class Helper
             "serviceName" => "",
             "security" => $server['tls'] != 0 ? ($server['tls'] == 2 ? "reality" : "tls") : "",
             "flow" => $server['flow'],
-            "fp" => $server['tls_settings']['fingerprint'] ?? 'chrome',
-            "insecure" => $server['tls_settings']['allow_insecure'] ?? 0,
+            "fp" => $tlsSettings['fingerprint'] ?? 'chrome',
+            "insecure" => $tlsSettings['allow_insecure'] ?? 0,
         ];
 
         if ($server['tls']) {
@@ -333,10 +333,11 @@ class Helper
 
     public static function buildTrojanUri($password, $server)
     {
+        $tlsSettings = $server['tls_settings'] ?? [];
         $config = [
-            'allowInsecure' => $server['allow_insecure'] ?? ($server['tls_settings']['allow_insecure'] ?? 0),
-            'peer' => $server['server_name'] ?? ($server['tls_settings']['server_name'] ?? ''),
-            'sni' => $server['server_name'] ?? ($server['tls_settings']['server_name'] ?? ''),
+            'allowInsecure' => $server['allow_insecure'] ?? ($tlsSettings['allow_insecure'] ?? 0),
+            'peer' => $server['server_name'] ?? ($tlsSettings['server_name'] ?? ''),
+            'sni' => $server['server_name'] ?? ($tlsSettings['server_name'] ?? ''),
             'type'=> $server['network'],
         ];
 
@@ -388,8 +389,9 @@ class Helper
 
         $parts = explode(",", $server['port']);
         $firstPort = strpos($parts[0], '-') !== false ? explode('-', $parts[0])[0] : $parts[0];
-        $insecure = $server['tls_settings']['allow_insecure'] ?? 0;
-        $sni = $server['tls_settings']['server_name'] ?? '';
+        $tlsSettings = $server['tls_settings'] ?? [];
+        $insecure = $tlsSettings['allow_insecure'] ?? 0;
+        $sni = $tlsSettings['server_name'] ?? '';
         $uri = "hysteria2://{$password}@{$remote}:{$firstPort}/?insecure={$insecure}&sni={$sni}";
 
         if (isset($server['obfs']) && isset($server['obfs_password'])) {
@@ -404,11 +406,12 @@ class Helper
 
     public static function buildTuicUri($password, $server)
     {
+        $tlsSettings = $server['tls_settings'] ?? [];
         $config = [
-            'sni' => $server['server_name'] ?? ($server['tls_settings']['server_name'] ?? ''),
+            'sni' => $server['server_name'] ?? ($tlsSettings['server_name'] ?? ''),
             'alpn'=> 'h3',
             'congestion_control' => $server['congestion_control'],
-            'allow_insecure' => $server['insecure'] ?? ($server['tls_settings']['allow_insecure'] ?? 0),
+            'allow_insecure' => $server['insecure'] ?? ($tlsSettings['allow_insecure'] ?? 0),
             'disable_sni' => $server['disable_sni'],
             'udp_relay_mode' => $server['udp_relay_mode'],
         ];
@@ -423,11 +426,12 @@ class Helper
 
     public static function buildAnytlsUri($password, $server)
     {
+        $tlsSettings = $server['tls_settings'] ?? [];
         $config = [
-            'insecure' => $server['insecure'] ?? ($server['tls_settings']['allow_insecure'] ?? 0),
+            'insecure' => $server['insecure'] ?? ($tlsSettings['allow_insecure'] ?? 0),
         ];
-        if (isset($server['server_name'])|| isset($server['tls_settings']['server_name'])) {
-            $config['sni'] = $server['server_name'] ?? ($server['tls_settings']['server_name'] ?? '');
+        if (isset($server['server_name'])|| isset($tlsSettings['server_name'])) {
+            $config['sni'] = $server['server_name'] ?? ($tlsSettings['server_name'] ?? '');
         }
 
         $remote = self::formatHost($server['host']);

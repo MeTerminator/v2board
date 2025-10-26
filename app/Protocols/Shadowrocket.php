@@ -50,17 +50,17 @@ class Shadowrocket
         if ($server['tls']) {
             $config['tls'] = 1;
             $tlsSettings = $server['tls_settings'] ?? ($server['tlsSettings'] ?? []);
-            $config['allowInsecure'] = (int)$tlsSettings['allow_insecure'] ?? ((int)$tlsSettings['allowInsecure'] ?? 0);
+            $config['allowInsecure'] = (int)($tlsSettings['allow_insecure'] ?? $tlsSettings['allowInsecure'] ?? 0);
             $config['peer'] = $tlsSettings['server_name'] ?? $tlsSettings['serverName'] ?? '';
         }
         if ($server['network'] === 'tcp') {
-                $tcpSettings = $server['network_settings'] ?? ($server['networkSettings'] ?? []);
-                if (isset($tcpSettings['header']['type']) && !empty($tcpSettings['header']['type']))
-                    $config['obfs'] = $tcpSettings['header']['type'];
-                if (isset($tcpSettings['header']['request']['path'][0]) && !empty($tcpSettings['header']['request']['path'][0]))
-                    $config['path'] = $tcpSettings['header']['request']['path'][0];
-                if (isset($tcpSettings['header']['request']['headers']['Host'][0]))
-                    $config['obfsParam'] = $tcpSettings['header']['request']['headers']['Host'][0];
+            $tcpSettings = $server['network_settings'] ?? ($server['networkSettings'] ?? []);
+            if (isset($tcpSettings['header']['type']) && !empty($tcpSettings['header']['type']))
+                $config['obfs'] = $tcpSettings['header']['type'];
+            if (isset($tcpSettings['header']['request']['path'][0]) && !empty($tcpSettings['header']['request']['path'][0]))
+                $config['path'] = $tcpSettings['header']['request']['path'][0];
+            if (isset($tcpSettings['header']['request']['headers']['Host'][0]))
+                $config['obfsParam'] = $tcpSettings['header']['request']['headers']['Host'][0];
         }
         if ($server['network'] === 'ws') {
             $config['obfs'] = "websocket";

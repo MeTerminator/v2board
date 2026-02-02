@@ -1,3 +1,5 @@
+# Windows端v2rayN使用教程
+
 # 下载软件
 浏览器打开网址 https://github.com/2dust/v2rayN/releases/latest
 选择 `v2rayN-With-Core.zip` 点击并下载
@@ -31,11 +33,11 @@ https://www.google.com/
 ![2024-08-18T06:53:20.png][8]
 
 
-  [1]: /fasscloud/3394489183.png
-  [2]: /fasscloud/553564817.png
-  [3]: /fasscloud/3471664504.png
-  [4]: /fasscloud/2516106909.png
-  [5]: /fasscloud/3174990945.png
-  [6]: /fasscloud/230390593.png
-  [7]: /fasscloud/81506616.png
-  [8]: /fasscloud/4057152039.png
+  [1]: https://dashdirect.metc.uk/fasscloud/3394489183.png
+  [2]: https://dashdirect.metc.uk/fasscloud/553564817.png
+  [3]: https://dashdirect.metc.uk/fasscloud/3471664504.png
+  [4]: https://dashdirect.metc.uk/fasscloud/2516106909.png
+  [5]: https://dashdirect.metc.uk/fasscloud/3174990945.png
+  [6]: https://dashdirect.metc.uk/fasscloud/230390593.png
+  [7]: https://dashdirect.metc.uk/fasscloud/81506616.png
+  [8]: https://dashdirect.metc.uk/fasscloud/4057152039.png

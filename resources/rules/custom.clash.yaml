@@ -52,7 +52,47 @@ proxy-groups:
 
 rules:
   # ==========================================
-  # 1. 进程级直连防循环与下载工具分流 (DIRECT)
+  # 1. 国内即时通讯软件直连 (DIRECT) - 解决加载慢、防延迟
+  # ==========================================
+  - "DOMAIN-KEYWORD,weixin,DIRECT"
+  - "DOMAIN-KEYWORD,wechat,DIRECT"
+  - "DOMAIN-KEYWORD,tencent,DIRECT"
+  - "DOMAIN-KEYWORD,qq,DIRECT"
+  - "DOMAIN-SUFFIX,weixin.com,DIRECT"
+  - "DOMAIN-SUFFIX,wechat.com,DIRECT"
+  - "DOMAIN-SUFFIX,qq.com,DIRECT"
+  - "DOMAIN-SUFFIX,tencent.com,DIRECT"
+  - "DOMAIN-SUFFIX,gtimg.com,DIRECT"
+  - "DOMAIN-SUFFIX,qlogo.cn,DIRECT"
+  - "DOMAIN-SUFFIX,qpic.cn,DIRECT"
+  - "DOMAIN-SUFFIX,wechatpay.com,DIRECT"
+  - "DOMAIN-SUFFIX,wechat.net,DIRECT"
+  - "DOMAIN-SUFFIX,wechatos.net,DIRECT"
+  - "DOMAIN-SUFFIX,servicewechat.com,DIRECT"
+  - "DOMAIN-SUFFIX,weixinbridge.com,DIRECT"
+  - "DOMAIN-SUFFIX,weixinsxy.com,DIRECT"
+  - "DOMAIN-SUFFIX,dingtalk.com,DIRECT"
+  - "DOMAIN-SUFFIX,dingtalk.net,DIRECT"
+  - "DOMAIN-SUFFIX,feishu.cn,DIRECT"
+  - "DOMAIN-SUFFIX,feishu.net,DIRECT"
+  - "DOMAIN-SUFFIX,larksuite.com,DIRECT"
+  - "PROCESS-NAME,WeChat,DIRECT"
+  - "PROCESS-NAME,WeChat.exe,DIRECT"
+  - "PROCESS-NAME,WeChatApp,DIRECT"
+  - "PROCESS-NAME,WeChatPlayer,DIRECT"
+  - "PROCESS-NAME,QQ,DIRECT"
+  - "PROCESS-NAME,QQ.exe,DIRECT"
+  - "PROCESS-NAME,TIM,DIRECT"
+  - "PROCESS-NAME,TIM.exe,DIRECT"
+  - "PROCESS-NAME,DingTalk,DIRECT"
+  - "PROCESS-NAME,DingTalk.exe,DIRECT"
+  - "PROCESS-NAME,Feishu,DIRECT"
+  - "PROCESS-NAME,Feishu.exe,DIRECT"
+  - "PROCESS-NAME,Lark,DIRECT"
+  - "PROCESS-NAME,Lark.exe,DIRECT"
+
+  # ==========================================
+  # 2. 进程级直连防循环与下载工具分流 (DIRECT)
   # ==========================================
   - "PROCESS-NAME,v2ray,DIRECT"
   - "PROCESS-NAME,xray,DIRECT"

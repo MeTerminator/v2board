@@ -102,6 +102,25 @@ class Stash
             array_unshift($config['rules'], "DOMAIN,{$subsDomain},DIRECT");
         }
 
+        if (isset($config['rules']) && is_array($config['rules'])) {
+            $rulesIndex = array_search('$proxy_rules', $config['rules'], true);
+            if ($rulesIndex !== false) {
+                $rulesConfPath = base_path('resources/rules/rules.conf');
+                if (\File::exists($rulesConfPath)) {
+                    $rulesLines = file($rulesConfPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+                    $appName = config('v2board.app_name', 'V2Board');
+                    $newRules = [];
+                    foreach ($rulesLines as $line) {
+                        $line = trim($line);
+                        if (empty($line) || str_starts_with($line, '#')) continue;
+                        $newRules[] = str_replace('PROXY', $appName, $line);
+                    }
+                    array_splice($config['rules'], $rulesIndex, 1, $newRules);
+                }
+            }
+        }
+
+
         $yaml = Yaml::dump($config, 2, 4, Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE);
         $yaml = str_replace('$app_name', config('v2board.app_name', 'V2Board'), $yaml);
         return $yaml;
